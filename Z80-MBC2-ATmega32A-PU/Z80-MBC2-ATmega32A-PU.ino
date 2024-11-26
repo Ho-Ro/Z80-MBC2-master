@@ -298,6 +298,7 @@ byte          diskErr         = 19;       // SELDISK, SELSECT, SELTRACK, WRITESE
 byte          numWriBytes;                // Number of written bytes after a writeSD() call
 byte          diskSet;                    // Current "Disk Set"
 
+void(* resetFunc) (void) = 0;//declare reset function at address 0
 // ------------------------------------------------------------------------------
 
 void setup() 
@@ -527,6 +528,8 @@ void setup()
     bootMode = inChar - '1';                      // Calculate bootMode from inChar
     if (bootMode <= maxBootMode) EEPROM.update(bootModeAddr, bootMode); // Save to the internal EEPROM if required
     else bootMode = EEPROM.read(bootModeAddr);    // Reload boot mode if '0' or > '5' choice selected
+
+    resetFunc(); //Software reset , bug fixed, sometimes, it will hang to read SD card
   }
 
   // Print current Disk Set and OS name (if OS boot is enabled)
