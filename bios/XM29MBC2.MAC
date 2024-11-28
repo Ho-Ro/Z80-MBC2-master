@@ -2317,7 +2317,11 @@ opmode:	defb	0		; 0 means reading from command line
 				; ..0 means command line
 bytcnt:	defb	0		; Command buffer bytes
 cpumhz:	defb	2		; CPU speed in MHz (for timeouts)
+  ifdef mbc2
+xport:	defb	0		; Transfer port defaults to CON
+  else
 xport:	defb	1		; Transfer port defaults to RDR/PUN
+  endif
 enhrdr:	defb	0		; 01 for RDR that returns with
 				; ..Z set if chr not ready
 
@@ -2331,6 +2335,8 @@ init:	ld	sp,lstack	; Use local stack
 	; Set the CONST mode to 8-bit mode on the Z80-MBC2
 	ld	a,constmd
 	call	gobios
+	ld	a,1		; slooow I/O, set 1 MHz CPU
+	jp	ini1
   endif
 ;------------------------------------------------------
 ;Set default CPU speed to 4MHZ and fix the help message
@@ -2340,7 +2346,7 @@ init:	ld	sp,lstack	; Use local stack
 	sub	a		; Test for 8080 or Z80
 	jp	pe,is8080
 	ld	a,4		; Assume Z80s run 4 MHz
-	ld	(cpumhz),a
+ini1:	ld	(cpumhz),a
 	add	a,'0'		; Fix default in help
 	ld	(dmhz),a	; ..message too
 is8080:
