@@ -2332,6 +2332,8 @@ enhrdr:	defb	0		; 01 for RDR that returns with
 init:	ld	sp,lstack	; Use local stack
 
   ifdef mbc2
+	ld	a,20
+	call	bfbk2		; set default /K20
 	; Set the CONST mode to 8-bit mode on the Z80-MBC2
 	ld	a,constmd
 	call	gobios
@@ -3149,8 +3151,8 @@ bfbk1:	ld	a,b
 ;compute number of pages from number of k-bytes high byte
 
 	ld	a,b
-	add	a,a		; *512
-	add	a,a		; *1024
+bfbk2:	add	a,a		; *2, K to 256 byte pages
+	add	a,a		; *4
 
 ;compute last allowed page's address
 
